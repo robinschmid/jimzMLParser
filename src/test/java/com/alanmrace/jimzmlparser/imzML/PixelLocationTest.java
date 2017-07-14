@@ -1,14 +1,20 @@
+package com.alanmrace.jimzmlparser.imzML;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.alanmrace.jimzmlparser.imzml;
 
 import static org.hamcrest.CoreMatchers.not;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
 import org.junit.Ignore;
+import org.junit.Test;
+
+import com.alanmrace.jimzmlparser.imzml.PixelLocation;
 
 /**
  * Tests for {@link PixelLocation}.

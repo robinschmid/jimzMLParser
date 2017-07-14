@@ -1,11 +1,12 @@
 /*
  * 
  */
-package com.alanmrace.jimzmlparser.imzml;
+package com.alanmrace.jimzmlparser.imzML;
 
 import com.alanmrace.jimzmlparser.exceptions.FatalParseException;
 import com.alanmrace.jimzmlparser.exceptions.ImzMLWriteException;
 import com.alanmrace.jimzmlparser.exceptions.MzMLParseException;
+import com.alanmrace.jimzmlparser.imzml.ImzML;
 import com.alanmrace.jimzmlparser.mzml.MzML;
 import com.alanmrace.jimzmlparser.mzml.Spectrum;
 import com.alanmrace.jimzmlparser.parser.ImzMLHandler;
