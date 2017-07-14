@@ -154,7 +154,8 @@ public class ImzMLHandler extends MzMLHeaderHandler {
      */
     public static ImzML parseimzML(String filename, boolean openDataStorage, ParserListener listener) throws FatalParseException {
         try {
-            OBO obo = new OBO("imagingMS.obo");
+        	String f = "imagingMS.obo";
+            OBO obo = new OBO(f);
 
             File ibdFile = new File(filename.substring(0, filename.lastIndexOf('.')) + ".ibd");
 

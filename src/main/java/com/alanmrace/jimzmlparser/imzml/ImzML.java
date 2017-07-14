@@ -530,7 +530,7 @@ public class ImzML extends MzML implements MassSpectrometryImagingData {
         return ticImage;
     }
     
-//	
+//	 
 //	public double[][] generateBasePeakMZImage() {
 //		double[][] image = new double[getHeight()][getWidth()];
 //

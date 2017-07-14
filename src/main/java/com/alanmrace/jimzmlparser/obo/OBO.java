@@ -1,6 +1,12 @@
 package com.alanmrace.jimzmlparser.obo;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,6 +37,7 @@ public class OBO implements Serializable {
     /** Dictionary of ontology terms, using their ID as the key. */
     private Map<String, OBOTerm> terms;
 
+    private String obopath = "C:\\Users\\r_schm33\\Programmieren\\Git\\jimzMLParser\\src\\main\\resources\\obo\\";
     /**
      * Generate ontology database from the specified .obo file. 
      * If the obo file specifies imports, then load those imports from resources
@@ -51,10 +58,13 @@ public class OBO implements Serializable {
         if (resourcePath.contains("http://")) {
             resourcePath = resourcePath.substring(resourcePath.lastIndexOf("/") + 1).toLowerCase();
         }
+        	resourcePath = obopath+resourcePath;
 
         logger.log(Level.FINER, "Parsing OBO /obo/{0}", resourcePath);
 
-        InputStream is = OBO.class.getResourceAsStream("/obo/" + resourcePath);
+        try {
+//      InputStream is = OBO.class.getResourceAsStream("/obo/" + resourcePath);
+        InputStream is = new FileInputStream(resourcePath);
 
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader in = new BufferedReader(isr);
@@ -63,7 +73,6 @@ public class OBO implements Serializable {
         OBOTerm curTerm = null;
         boolean processingTerms = false;
 
-        try {
             while ((curLine = in.readLine()) != null) {
                 // Skip empty lines
                 if (curLine.trim().isEmpty()) {
@@ -103,7 +112,7 @@ public class OBO implements Serializable {
         } catch (IOException ex) {
             Logger.getLogger(OBO.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
         // Process relationships
         for (OBOTerm term : terms.values()) {
             Collection<String> is_a = term.getIsA();

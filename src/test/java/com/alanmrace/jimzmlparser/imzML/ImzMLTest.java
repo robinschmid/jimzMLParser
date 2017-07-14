@@ -57,6 +57,7 @@ public class ImzMLTest {
     @Before
     public void setUp() {
         try {
+        	System.out.println(new File(ImzMLTest.class.getResource(TEST_RESOURCE).getPath()).exists());
             instance = ImzMLHandler.parseimzML(ImzMLTest.class.getResource(TEST_RESOURCE).getPath());
         } catch (FatalParseException ex) {
             Logger.getLogger(ImzMLTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -242,10 +243,9 @@ public class ImzMLTest {
      * Test of generateTICImage method, of class ImzML.
      */
     @Test
-    @Ignore
+//    @Ignore
     public void testGenerateTICImage() {
         System.out.println("generateTICImage");
-        ImzML instance = null;
         double[][] expResult = null;
         double[][] result = instance.generateTICImage();
         assertArrayEquals(expResult, result);
