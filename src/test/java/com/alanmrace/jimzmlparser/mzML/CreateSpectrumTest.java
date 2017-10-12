@@ -3,7 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.alanmrace.jimzmlparser.mzml;
+package com.alanmrace.jimzmlparser.mzML;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.zip.DataFormatException;
+
+import org.junit.Test;
 
 import com.alanmrace.jimzmlparser.data.DataTypeTransform;
 import com.alanmrace.jimzmlparser.data.DataTypeTransform.DataType;
@@ -11,22 +24,19 @@ import com.alanmrace.jimzmlparser.exceptions.FatalParseException;
 import com.alanmrace.jimzmlparser.exceptions.Issue;
 import com.alanmrace.jimzmlparser.exceptions.MzMLParseException;
 import com.alanmrace.jimzmlparser.imzml.ImzML;
+import com.alanmrace.jimzmlparser.mzml.BinaryDataArray;
+import com.alanmrace.jimzmlparser.mzml.DataProcessing;
+import com.alanmrace.jimzmlparser.mzml.EmptyCVParam;
+import com.alanmrace.jimzmlparser.mzml.MzML;
+import com.alanmrace.jimzmlparser.mzml.ProcessingMethod;
+import com.alanmrace.jimzmlparser.mzml.Software;
+import com.alanmrace.jimzmlparser.mzml.Spectrum;
 import com.alanmrace.jimzmlparser.obo.OBO;
 import com.alanmrace.jimzmlparser.parser.ImzMLHandler;
 import com.alanmrace.jimzmlparser.parser.MzMLHeaderHandler;
 import com.alanmrace.jimzmlparser.parser.ParserListener;
 import com.alanmrace.jimzmlparser.writer.ImzMLWriter;
 import com.alanmrace.jimzmlparser.writer.MzMLWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.zip.DataFormatException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import org.junit.Test;
 
 /**
  *

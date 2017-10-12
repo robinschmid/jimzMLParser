@@ -3,17 +3,24 @@
  */
 package com.alanmrace.jimzmlparser.imzML;
 
-import com.alanmrace.jimzmlparser.exceptions.FatalParseException;
-import com.alanmrace.jimzmlparser.mzml.Spectrum;
-import com.alanmrace.jimzmlparser.parser.ImzMLHandler;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Ignore;
+import org.junit.Test;
+
+import com.alanmrace.jimzmlparser.exceptions.FatalParseException;
+import com.alanmrace.jimzmlparser.imzml.ImzML;
+import com.alanmrace.jimzmlparser.mzml.Spectrum;
+import com.alanmrace.jimzmlparser.parser.ImzMLHandler;
 /**
  * Tests for ImzML.
  * 
