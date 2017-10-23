@@ -1,20 +1,26 @@
 /*
  * 
  */
-package com.alanmrace.jimzmlparser.imzml;
+package com.alanmrace.jimzmlparser.imzML;
 
-import com.alanmrace.jimzmlparser.exceptions.FatalParseException;
-import com.alanmrace.jimzmlparser.mzml.Spectrum;
-import com.alanmrace.jimzmlparser.parser.ImzMLHandler;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Ignore;
+import org.junit.Test;
 
+import com.alanmrace.jimzmlparser.exceptions.FatalParseException;
+import com.alanmrace.jimzmlparser.imzml.ImzML;
+import com.alanmrace.jimzmlparser.mzml.Spectrum;
+import com.alanmrace.jimzmlparser.parser.ImzMLHandler;
 /**
  * Tests for ImzML.
  * 
@@ -238,7 +244,7 @@ public class ImzMLTest {
      * Test of generateTICImage method, of class ImzML.
      */
     @Test
-//    @Ignore
+    @Ignore
     public void testGenerateTICImage() {
         System.out.println("generateTICImage");
         double[][] expResult = null;
@@ -260,62 +266,5 @@ public class ImzMLTest {
         instance.setibdFile(ibdFile);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of write method, of class ImzML.
-     * 
-     * @throws Exception IOException if issue with writing 
-     */
-    @Test
-    @Ignore
-    public void testWrite_0args() throws Exception {
-        System.out.println("write");
-        ImzML instance = null;
-        instance.write();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of write method, of class ImzML.
-     * 
-     * @throws Exception IOException if issue with writing 
-     */
-    @Test
-    public void testWrite_String() {
-        System.out.println("write");
-        String filename = "ImzMLTest.imzML";
-        
-        synchronized(this) {
-            try {
-                instance.write(filename);
-            } catch (ImzMLWriteException ex) {
-                Logger.getLogger(ImzMLTest.class.getName()).log(Level.SEVERE, null, ex);
-                
-                fail("Unexpected exception occured: " + ex);
-            }
-        }
-    }
-    
-    @Test
-    public void testWritingOut() {
-        System.out.println("---- Testing Writing Out mzML ----");
-        
-        synchronized(this) {
-            try {
-                MzML mzML = MzMLHeaderHandler.parsemzMLHeader(ImzMLTest.class.getResource("/small_miape.pwiz.1.1.mzML").getPath());
-                
-                mzML.write("small_miape.pwiz.1.1.mzML");
-            } catch (MzMLParseException ex) {
-                Logger.getLogger(ImzMLTest.class.getName()).log(Level.SEVERE, null, ex);
-                
-                fail("Unexpected exception occured: " + ex);
-            } catch (ImzMLWriteException ex) {
-                Logger.getLogger(ImzMLTest.class.getName()).log(Level.SEVERE, null, ex);
-                
-                fail("Unexpected exception occured: " + ex);
-            }
-        }
     }
 }
