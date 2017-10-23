@@ -32,14 +32,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/r_schm33/.m2/repository/mzmine/jimzMLParser/1.0/jimzMLParser-1.0.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="mzmine"/>
-			<attribute name="maven.artifactId" value="jimzMLParser"/>
-			<attribute name="maven.version" value="1.0"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

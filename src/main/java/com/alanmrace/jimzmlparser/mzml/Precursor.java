@@ -92,6 +92,14 @@ public class Precursor extends MzMLContentWithParams {
     }
 
     /**
+     * The reference spectrum
+     * @return
+     */
+    public Spectrum getSpectrumRef() {
+		return spectrumRef;
+	}
+
+	/**
      * Set the details of the location of the spectrum describing the precursor
      * in an external SourceFile [Optional]. The spectrum ID of a precursor spectrum which 
      * is stored in the external document (see {@link Precursor#setSourceFileRef}) 
