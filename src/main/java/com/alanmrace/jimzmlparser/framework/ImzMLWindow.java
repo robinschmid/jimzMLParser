@@ -1,7 +1,5 @@
 package com.alanmrace.jimzmlparser.framework;
 
-import static org.junit.Assert.fail;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -77,7 +75,6 @@ public class ImzMLWindow {
             instance = ImzMLHandler.parseimzML("C:/DATA/MALDI Sh/examples/Example_Processed.imzML");
         } catch (FatalParseException ex) {
             Logger.getLogger(ImzMLTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail("ImzMLParseException: " + ex);
             ex.printStackTrace();
         }
 	}
@@ -89,7 +86,6 @@ public class ImzMLWindow {
             System.out.println(w+"x"+h+" ("+w*h+")");
         } catch (FatalParseException ex) {
             Logger.getLogger(ImzMLTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail("ImzMLParseException: " + ex);
             ex.printStackTrace();
         }
 	}
@@ -102,7 +98,6 @@ public class ImzMLWindow {
             pnImage.repaint();
         } catch (FatalParseException ex) {
             Logger.getLogger(ImzMLTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail("ImzMLParseException: " + ex);
             ex.printStackTrace();
         }
 	}
