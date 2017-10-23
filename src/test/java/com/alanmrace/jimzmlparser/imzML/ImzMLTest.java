@@ -244,7 +244,7 @@ public class ImzMLTest {
      * Test of generateTICImage method, of class ImzML.
      */
     @Test
-//    @Ignore
+    @Ignore
     public void testGenerateTICImage() {
         System.out.println("generateTICImage");
         double[][] expResult = null;
