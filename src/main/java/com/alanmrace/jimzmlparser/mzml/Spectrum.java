@@ -81,6 +81,11 @@ public class Spectrum extends MzMLDataContainer implements Serializable {
      * Accession: profile spectrum (MS:1000128).
      */
     public static final String profileSpectrumID = "MS:1000128"; // EmptyCVParam
+    
+    /**
+     * Accession: profile spectrum (MS:1000511).
+     */
+    public static final String msLevel = "MS:1000511";
 
     /**
      * Static number used to generate a unique ID for any Spectrum generated

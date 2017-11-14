@@ -129,6 +129,10 @@ public class ScanSettings extends MzMLContentWithParams implements Referenceable
      */
     public static final String pixelAreaID = "IMS:1000046";
 
+    /**
+     * Accession: shape or pixel height? (IMS:1000046).
+     */
+    public static final String pixelShape = "IMS:1000047";
     // Attributes
 
     /**
