@@ -71,8 +71,8 @@ public class ImzMLWindow {
         try {
 //        	System.out.println(new File(getClass().getResource(TEST_RESOURCE).getPath()).exists());
 //            instance = ImzMLHandler.parseimzML(getClass().getResource(TEST_RESOURCE).getPath());
-//            instance = ImzMLHandler.parseimzML("C:/DATA/MALDI Sh/von Rebeca/20170309_ProbeF_10min_Subli._R/AREA01/imzml/20170309_MADLI_III_20170309_ProbeF_10min_Subli-001.imzML");
-            instance = ImzMLHandler.parseimzML("C:/DATA/MALDI Sh/examples/Example_Processed.imzML");
+        	instance = ImzMLHandler.parseimzML("C:/DATA/MALDI Sh/imzML shimadzu/2017_10_04_Niere Iopromid gespiked_Niere unten (1,2)_AREA01-001.imzML");
+//            instance = ImzMLHandler.parseimzML("C:/DATA/MALDI Sh/examples/Example_Processed.imzML");
         } catch (FatalParseException ex) {
             Logger.getLogger(ImzMLTest.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
@@ -92,6 +92,7 @@ public class ImzMLWindow {
 	private void createTICImage() {
         try {
             z = instance.generateTICImage();
+            
 			setZ(z);
 			
             pnImage.revalidate();

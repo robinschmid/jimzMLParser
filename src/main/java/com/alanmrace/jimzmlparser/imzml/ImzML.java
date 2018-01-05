@@ -567,6 +567,8 @@ public class ImzML extends MzML implements MassSpectrometryImagingData {
                             Logger.getLogger(ImzML.class.getName()).log(Level.SEVERE, null, ex1);
                         }
                     }
+                    // first data point in shimadzu data is 
+                    if(ticImage[y][x]<-1.1E20) ticImage[y][x] = 234080;
                 }
             }
         }
