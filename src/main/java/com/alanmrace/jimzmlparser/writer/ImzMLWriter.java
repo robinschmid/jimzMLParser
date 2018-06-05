@@ -3,6 +3,7 @@ package com.alanmrace.jimzmlparser.writer;
 import com.alanmrace.jimzmlparser.data.DataTransformation;
 import com.alanmrace.jimzmlparser.imzml.PixelLocation;
 import com.alanmrace.jimzmlparser.mzml.BinaryDataArray;
+import com.alanmrace.jimzmlparser.mzml.BooleanCVParam;
 import com.alanmrace.jimzmlparser.mzml.CV;
 import com.alanmrace.jimzmlparser.mzml.CVParam;
 import com.alanmrace.jimzmlparser.mzml.Chromatogram;
@@ -12,6 +13,7 @@ import com.alanmrace.jimzmlparser.mzml.FileContent;
 import com.alanmrace.jimzmlparser.mzml.IntegerCVParam;
 import com.alanmrace.jimzmlparser.mzml.LongCVParam;
 import com.alanmrace.jimzmlparser.mzml.MzML;
+import com.alanmrace.jimzmlparser.mzml.ReferenceableParamGroup;
 import com.alanmrace.jimzmlparser.mzml.ScanSettings;
 import com.alanmrace.jimzmlparser.mzml.ScanSettingsList;
 import com.alanmrace.jimzmlparser.mzml.Spectrum;
@@ -25,6 +27,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -116,18 +119,14 @@ public class ImzMLWriter extends ImzMLHeaderWriter {
                 ibdLocation = ibdLocation.substring(0, pos);
             }
 
-            // Ensure that the IMS ontology is included
-            boolean imsCVFound = false;
-            
-            for(CV cv : mzML.getCVList()) {
-                if(cv.getID().equals("IMS")) {
-                    imsCVFound = true;
-                    break;
-                }
+            // Update the ontology list
+            mzML.getCVList().clear();
+            OBO obo = OBO.getOBO();
+            List<OBO> fullOBOList = obo.getFullImportHeirarchy();
+
+            for(OBO currentOBO : fullOBOList) {
+                mzML.getCVList().addCV(new CV(currentOBO));
             }
-            
-            if(!imsCVFound)
-                mzML.getCVList().add(new CV(OBO.IMS_OBO_URI, OBO.IMS_OBO_FULLNAME, OBO.IMS_OBO_ID, OBO.IMS_OBO_VERSION));
             
             // Update the imzML header information about storage type
             FileContent fileContent = mzML.getFileDescription().getFileContent();
@@ -141,6 +140,18 @@ public class ImzMLWriter extends ImzMLHeaderWriter {
                 default:
                     fileContent.addCVParam(new EmptyCVParam(OBO.getOBO().getTerm(FileContent.binaryTypeProcessedID)));
                     break;
+            }
+            
+            // Make sure that any referanceableParamGroup for the data arrays state that the data is external
+            ReferenceableParamGroup rpgmzArray = mzML.getReferenceableParamGroupList().getReferenceableParamGroup("mzArray");
+            if(rpgmzArray != null) {
+                rpgmzArray.removeChildOfCVParam(BinaryDataArray.externalDataID);
+                rpgmzArray.addCVParam(new BooleanCVParam(OBO.getOBO().getTerm(BinaryDataArray.externalDataID), true));
+            }
+            ReferenceableParamGroup rpgintensityArray = mzML.getReferenceableParamGroupList().getReferenceableParamGroup("intensityArray");
+            if(rpgintensityArray != null) {
+                rpgintensityArray.removeChildOfCVParam(BinaryDataArray.externalDataID);
+                rpgintensityArray.addCVParam(new BooleanCVParam(OBO.getOBO().getTerm(BinaryDataArray.externalDataID), true));
             }
 
             // Set up the checksum
@@ -293,7 +304,6 @@ public class ImzMLWriter extends ImzMLHeaderWriter {
             byte[] transformedData = transformation.performForwardTransform(data);
 
             binayDataArray.removeCVParam(BinaryDataArray.externalDataID);
-            binayDataArray.addCVParam(new EmptyCVParam(OBO.getOBO().getTerm(BinaryDataArray.externalDataID)));
 
             binayDataArray.removeCVParam(BinaryDataArray.externalOffsetID);
             binayDataArray.addCVParam(new LongCVParam(OBO.getOBO().getTerm(BinaryDataArray.externalOffsetID), getDataPointer()));
@@ -319,8 +329,4 @@ public class ImzMLWriter extends ImzMLHeaderWriter {
         return dataRAF.getFilePointer();
     }
 
-    @Override
-    public boolean shouldOutputIndex() {
-        return false;
-    }
 }

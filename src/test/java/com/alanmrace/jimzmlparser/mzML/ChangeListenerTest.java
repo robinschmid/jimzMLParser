@@ -3,19 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.alanmrace.jimzmlparser.mzML;
-
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
+package com.alanmrace.jimzmlparser.mzml;
 
 import com.alanmrace.jimzmlparser.event.MzMLContentListener;
 import com.alanmrace.jimzmlparser.event.MzMLEvent;
-import com.alanmrace.jimzmlparser.mzml.CVParam;
-import com.alanmrace.jimzmlparser.mzml.FileContent;
-import com.alanmrace.jimzmlparser.mzml.IntegerCVParam;
-import com.alanmrace.jimzmlparser.mzml.Scan;
 import com.alanmrace.jimzmlparser.obo.OBO;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 /**
  *

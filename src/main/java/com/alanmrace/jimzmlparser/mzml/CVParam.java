@@ -147,7 +147,7 @@ public abstract class CVParam extends MzMLContent {
 
     @Override
     public String getXMLAttributeText() {
-        String attributes = "cvRef=\"" + XMLHelper.ensureSafeXML(term.getNamespace()) + "\"";
+        String attributes = "cvRef=\"" + XMLHelper.ensureSafeXML(term.getOntology().getOntology().toUpperCase()) + "\"";
         attributes += " accession=\"" + XMLHelper.ensureSafeXML(term.getID()) + "\"";
         attributes += " name=\"" + XMLHelper.ensureSafeXML(term.getName()) + "\"";
         
@@ -158,7 +158,7 @@ public abstract class CVParam extends MzMLContent {
         }
 
         if (units != null) {
-            attributes += " unitCvRef=\"" + XMLHelper.ensureSafeXML(units.getNamespace()) + "\"";
+            attributes += " unitCvRef=\"" + XMLHelper.ensureSafeXML(units.getOntology().getOntology().toUpperCase()) + "\"";
             attributes += " unitAccession=\"" + XMLHelper.ensureSafeXML(units.getID()) + "\"";
             attributes += " unitName=\"" + XMLHelper.ensureSafeXML(units.getName()) + "\"";
         }
@@ -300,33 +300,33 @@ public abstract class CVParam extends MzMLContent {
         return param;
     }
     
-    @Override
-    public boolean equals(Object o) {
-        if (o == this) {
-            return true;
-        }
-
-        if (!(o instanceof CVParam)) {
-            return false;
-        }
-
-        CVParam cvParam = (CVParam) o;
-
-        if(cvParam instanceof EmptyCVParam)
-            return cvParam.getTerm().equals(term);
-        
-        return cvParam.getTerm().equals(term)
-                && (cvParam.getValueAsString().equals(getValueAsString()))
-                && //				((value == null || cvParam.getValue() == null) ? true : cvParam.getValue().equals(value)) && 
-                ((units == null || cvParam.getUnits() == null) ? true : cvParam.getUnits().equals(units));
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 53 * hash + (this.term != null ? this.term.hashCode() : 0);
-        hash = 53 * hash + (this.units != null ? this.units.hashCode() : 0);
-        hash = 53 * hash + (getValueAsString() != null ? getValueAsString().hashCode() : 0);
-        return hash;
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (o == this) {
+//            return true;
+//        }
+//
+//        if (!(o instanceof CVParam)) {
+//            return false;
+//        }
+//
+//        CVParam cvParam = (CVParam) o;
+//
+//        if(cvParam instanceof EmptyCVParam)
+//            return cvParam.getTerm().equals(term);
+//        
+//        return cvParam.getTerm().equals(term)
+//                && (cvParam.getValueAsString().equals(getValueAsString()))
+//                && //				((value == null || cvParam.getValue() == null) ? true : cvParam.getValue().equals(value)) && 
+//                ((units == null || cvParam.getUnits() == null) ? true : cvParam.getUnits().equals(units));
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        int hash = 5;
+//        hash = 53 * hash + (this.term != null ? this.term.hashCode() : 0);
+//        hash = 53 * hash + (this.units != null ? this.units.hashCode() : 0);
+//        hash = 53 * hash + (getValueAsString() != null ? getValueAsString().hashCode() : 0);
+//        return hash;
+//    }
 }

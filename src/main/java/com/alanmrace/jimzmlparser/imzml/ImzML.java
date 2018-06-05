@@ -84,6 +84,11 @@ public class ImzML extends MzML implements MassSpectrometryImagingData {
     private Spectrum[][][] spectrumGrid;
 
     /**
+     * Array of the pixel locations that have an associated Spectrum.
+     */
+    private PixelLocation[] pixelLocations;
+    
+    /**
      * Minimum m/z value detected within this ImzML file.
      */
     private double minMZ = Double.MAX_VALUE;
@@ -128,6 +133,20 @@ public class ImzML extends MzML implements MassSpectrometryImagingData {
      */
     public ImzML(MzML mzML) {
         super(mzML);
+    }
+    
+    public PixelLocation[] getPixelList() {
+        // Useful for protein id script
+        if(pixelLocations == null) {
+            pixelLocations = new PixelLocation[getRun().getSpectrumList().size()];
+            int index = 0;
+            
+            for(Spectrum spectrum : getRun().getSpectrumList()) {
+                pixelLocations[index++] = spectrum.getPixelLocation();
+            }
+        }
+        
+        return pixelLocations;
     }
     
     @Override
@@ -537,6 +556,9 @@ public class ImzML extends MzML implements MassSpectrometryImagingData {
 //	}
 //	
     @Override
+    // TODO: Add in exception for failure to generate image - this should be caught to avoid 
+    // issues where ArrayIndexOutOfBounds is thrown then the specified image dimensions is not
+    // correct for the data
     public double[][] generateTICImage() {
         if(ticImage == null) {
             ticImage = new double[getHeight()][getWidth()];
@@ -545,7 +567,11 @@ public class ImzML extends MzML implements MassSpectrometryImagingData {
                 for (Spectrum spectrum : getRun().getSpectrumList()) {
                     int x = spectrum.getScanList().get(0).getCVParam(Scan.positionXID).getValueAsInteger() - 1;
                     int y = spectrum.getScanList().get(0).getCVParam(Scan.positionYID).getValueAsInteger() - 1;
-
+                    
+                    //if(y > ticImage[0].length) {
+                    //    throw new InvalidCVParamValue("Max y value is less than a y coordinate of a spectrum in the data");
+                    //} else if()
+                    
                     try {
                         double tic = spectrum.getCVParam(Spectrum.totalIonCurrentID).getValueAsDouble();
 

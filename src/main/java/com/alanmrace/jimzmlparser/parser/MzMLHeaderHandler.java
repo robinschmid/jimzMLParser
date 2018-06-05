@@ -34,7 +34,6 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
-import javax.xml.bind.DatatypeConverter;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -359,7 +358,8 @@ public class MzMLHeaderHandler extends DefaultHandler {
     
     public static MzML parsemzMLHeader(String filename, boolean openDataFile, ParserListener listener) throws FatalParseException {
         try {
-            OBO obo = new OBO("imagingMS.obo");
+            //OBO obo = new OBO("imagingMS.obo");
+            OBO obo = OBO.getOBO();
 
             // Parse mzML
             MzMLHeaderHandler handler = new MzMLHeaderHandler(obo, new File(filename), openDataFile);
@@ -461,7 +461,7 @@ public class MzMLHeaderHandler extends DefaultHandler {
                                 case Empty:
                                     cvParam = new EmptyCVParam(term, units);
                                     
-                                    if (value != null) {
+                                    if (value != null && !value.isEmpty()) {
                                         InvalidFormatIssue formatIssue = new InvalidFormatIssue(term, attributes.getValue("value"));
                                         formatIssue.setIssueLocation(currentContent);
                                         
@@ -581,24 +581,31 @@ public class MzMLHeaderHandler extends DefaultHandler {
                 throw new InvalidMzML("<mzML> tag not defined prior to defining <cvList> tag.", ex);
             }
         } else if ("cv".equals(qName)) {
-            String cvURI = attributes.getValue("URI");
+            OBO obo = OBO.getOBO().getOBOWithID(attributes.getValue("id"));
             
-            // In old versions a lower case attribute was used incorrectly, so 
-            // read this in
-            if(cvURI == null)
-                cvURI = attributes.getValue("uri");
+            if(obo != null)
+                cvList.add(new CV(obo));
+            else
+                System.out.println("WEIRD ONTOLOGY FOUND! " + attributes.getValue("id"));
             
-            CV cv = new CV(cvURI, attributes.getValue("fullName"), attributes.getValue("id"));
-
-            if (attributes.getValue("version") != null) {
-                cv.setVersion(attributes.getValue("version"));
-            }
-
-            try {
-                cvList.add(cv);
-            } catch (NullPointerException ex) {
-                throw new InvalidMzML("<cvList> tag not defined prior to defining <cv> tag.", ex);
-            }
+//            String cvURI = attributes.getValue("URI");
+//            
+//            // In old versions a lower case attribute was used incorrectly, so 
+//            // read this in
+//            if(cvURI == null)
+//                cvURI = attributes.getValue("uri");
+//            
+//            CV cv = new CV(cvURI, attributes.getValue("fullName"), attributes.getValue("id"));
+//
+//            if (attributes.getValue("version") != null) {
+//                cv.setVersion(attributes.getValue("version"));
+//            }
+//
+//            try {
+//                cvList.add(cv);
+//            } catch (NullPointerException ex) {
+//                throw new InvalidMzML("<cvList> tag not defined prior to defining <cv> tag.", ex);
+//            }
         } else if ("fileDescription".equals(qName)) {
             fileDescription = new FileDescription();
 
@@ -651,7 +658,6 @@ public class MzMLHeaderHandler extends DefaultHandler {
             }
         } else if ("referenceableParamGroup".equals(qName)) {
             ReferenceableParamGroup rpg = new ReferenceableParamGroup(attributes.getValue("id"));
-
             currentContent = rpg;
 
             //try {
@@ -1006,11 +1012,18 @@ public class MzMLHeaderHandler extends DefaultHandler {
             if (startTimeStamp != null) {
                 try {
                     // This should handle the datetime, assuming it is formatted correctly
-                    Calendar dateTime = DatatypeConverter.parseDateTime(startTimeStamp);
+                    //Calendar dateTime = DatatypeConverter.parseDateTime(startTimeStamp);
+                    
+                    SimpleDateFormat xmlDateTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    
+                    Date date = xmlDateTime.parse(startTimeStamp);
+                    Calendar dateTime = xmlDateTime.getCalendar();
+                    dateTime.setTime(date);
+                    
                     run.setStartTimeStamp(dateTime);
-                } catch (IllegalArgumentException ex) {
+                } catch (ParseException ex) {
                     // Inform validator that invalid timestamp used
-                    InvalidFormatIssue formatIssue = new InvalidFormatIssue("startTimeStamp", "xsd:dateTime", startTimeStamp);
+                    InvalidFormatIssue formatIssue = new InvalidFormatIssue("startTimeStamp", "yyyy-MM-dd'T'HH:mm:ss", startTimeStamp);
                     formatIssue.setIssueLocation(currentContent);
 
                     notifyParserListeners(formatIssue); 
@@ -1030,7 +1043,7 @@ public class MzMLHeaderHandler extends DefaultHandler {
 
                         notifyParserListeners(secondFormatIssue); 
                     }
-                }
+                } 
             }
 
 //            try {
@@ -1557,6 +1570,92 @@ public class MzMLHeaderHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if ("spectrum".equals(qName)) {
             processingSpectrum = false;
+            
+            // Try and tidy up spectrum
+            CVParam cvParam = currentSpectrum.getCVParamOrChild("MS:1000294");
+            if(currentSpectrum.containsCVParam(cvParam)) {
+//                System.out.println("Tidying up to be done.." + referenceableParamGroupList);
+                
+                ReferenceableParamGroup bestGroup = currentSpectrum.findBestFittingRPG(referenceableParamGroupList);
+                
+                if(bestGroup == null) {
+//                    System.out.println("No group matches so far..");
+                    // TODO: Give it a better name
+                    bestGroup = new ReferenceableParamGroup();
+                    
+                    if(referenceableParamGroupList == null) {
+                        referenceableParamGroupList = new ReferenceableParamGroupList(1);
+                        mzML.setReferenceableParamGroupList(referenceableParamGroupList);
+                    }
+                    
+                    referenceableParamGroupList.add(bestGroup);
+                    
+                    System.out.println("New group created: " + bestGroup);
+                    
+                    bestGroup.addCVParam(currentSpectrum.getCVParamOrChild("MS:1000294"));
+                    bestGroup.addCVParam(currentSpectrum.getCVParamOrChild("MS:1000511")); // ms level
+                    bestGroup.addCVParam(currentSpectrum.getCVParamOrChild(Spectrum.scanPolarityID));
+                    bestGroup.addCVParam(currentSpectrum.getCVParamOrChild("MS:1000525")); // spectrum representation
+                }
+                
+//                System.out.println("Replacing group..." + bestGroup);
+                currentSpectrum.replaceCVParamsWithRPG(bestGroup);
+            }
+        } else if ("scan".equals(qName)) {            
+            // Try and tidy up scan
+            CVParam cvParam = currentScan.getCVParamOrChild("MS:1000616");
+            if(currentScan.containsCVParam(cvParam)) {
+                ReferenceableParamGroup bestGroup = currentScan.findBestFittingRPG(referenceableParamGroupList);
+                
+                if(bestGroup == null) {
+//                    System.out.println("No group matches so far..");
+                    // TODO: Give it a better name
+                    bestGroup = new ReferenceableParamGroup();
+                    
+                    if(referenceableParamGroupList == null) {
+                        referenceableParamGroupList = new ReferenceableParamGroupList(1);
+                        mzML.setReferenceableParamGroupList(referenceableParamGroupList);
+                    }
+                    
+                    referenceableParamGroupList.add(bestGroup);
+                    
+                    System.out.println("New group created: " + bestGroup);
+                    
+                    bestGroup.addCVParam(currentScan.getCVParamOrChild("MS:1000512"));
+                    bestGroup.addCVParam(currentScan.getCVParamOrChild("MS:1000616"));
+                    bestGroup.addCVParam(currentScan.getCVParamOrChild("MS:1000927"));
+                }
+                
+                currentScan.replaceCVParamsWithRPG(bestGroup);
+            }
+        } else if("scanWindow".equals(qName)) {
+            if (currentContent instanceof MzMLContentWithParams) {
+                CVParam cvParam = ((MzMLContentWithParams) currentContent).getCVParamOrChild("MS:1000501");
+                
+                if(((MzMLContentWithParams) currentContent).containsCVParam(cvParam)) {
+                    ReferenceableParamGroup bestGroup = ((MzMLContentWithParams) currentContent).findBestFittingRPG(referenceableParamGroupList);
+                    
+                    if(bestGroup == null) {
+    //                    System.out.println("No group matches so far..");
+                        // TODO: Give it a better name
+                        bestGroup = new ReferenceableParamGroup();
+
+                        if(referenceableParamGroupList == null) {
+                            referenceableParamGroupList = new ReferenceableParamGroupList(1);
+                            mzML.setReferenceableParamGroupList(referenceableParamGroupList);
+                        }
+
+                        referenceableParamGroupList.add(bestGroup);
+
+                        System.out.println("New scanWindow group created: " + bestGroup);
+
+                        bestGroup.addCVParam(((MzMLContentWithParams) currentContent).getCVParamOrChild("MS:1000501"));
+                        bestGroup.addCVParam(((MzMLContentWithParams) currentContent).getCVParamOrChild("MS:1000500"));
+                    }
+
+                    ((MzMLContentWithParams) currentContent).replaceCVParamsWithRPG(bestGroup);
+                }
+            }
         } else if ("chromatogram".equals(qName)) {
             processingChromatogram = false;
         } else if ("precursor".equals(qName)) {
