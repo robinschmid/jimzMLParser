@@ -23,16 +23,12 @@
         </resources>
             <plugins>
                 <plugin>
-                    <version>2.10</version>
+				<groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <configuration>
-                        <systemProperties>
-                            <property> 
-                                <name>java.util.logging.config.file</name>
-                                <value>src/test/resources/logging.properties</value>
-                            </property>
-                        </systemProperties>
-                    </configuration>
+                    <version>2.22.0</version>
+				<configuration>
+					<argLine>-Xmx1024m</argLine>
+				</configuration>
                 </plugin>
                 <!--
                 -   Download the necessary controlled vocabulary 
