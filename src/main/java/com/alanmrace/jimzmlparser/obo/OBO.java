@@ -146,10 +146,6 @@ public class OBO implements Serializable {
               dataVersion = value;
             }
           }
-
-          // TODO need new imagingMS.obo file - link in pom is broken
-          if (ontology == null)
-            ontology = "imagingMS.obo";
         }
       }
     } catch (IOException ex) {
